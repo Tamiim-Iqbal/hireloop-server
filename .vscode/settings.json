@@ -28,5 +28,8 @@
         "titleBar.inactiveBackground": "#15372099",
         "titleBar.inactiveForeground": "#e7e7e799"
     },
-    "peacock.color": "#153720"
+    "peacock.color": "#153720",
+    "cSpell.words": [
+        "Hireloop"
+    ]
 }

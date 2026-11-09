@@ -25,10 +25,33 @@ export async function connectToMongoDB() {
 }
 
 const connectedClient = await connectToMongoDB();
+const database = connectedClient.db("hireloop");
+const users = database.collection("user");
+const jobs = database.collection("jobs");
 
 app.get("/", (req, res) => {
   res.send("Hello from Hireloop!");
 });
+
+// Get users 
+app.get('/users', async (req, res) => {
+    const cursor = users.find({});
+    const result = await cursor.toArray();
+    res.send(result);
+})
+
+// Get jobs
+app.get('/jobs', async (req, res) => {
+    const cursor = jobs.find({});
+    const result = await cursor.toArray();
+    res.send(result);
+})
+
+app.post('/jobs', async (req, res) => {
+  const job = req.body;
+  const result = await jobs.insertOne(job);
+  res.send(result);
+})
 
 app.listen(PORT, () => {
   console.log(`Hireloop server is running on port ${PORT}`);
