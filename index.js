@@ -40,7 +40,7 @@ app.get('/users', async (req, res) => {
     res.send(result);
 })
 
-// Get jobs
+// Jobs related APIs  
 app.get('/jobs', async (req, res) => {
     const cursor = jobs.find({});
     const result = await cursor.toArray();
@@ -50,6 +50,13 @@ app.get('/jobs', async (req, res) => {
 app.post('/jobs', async (req, res) => {
   const job = req.body;
   const result = await jobs.insertOne(job);
+  res.send(result);
+})
+
+app.delete('/jobs/:id', async (req, res) => {
+  const id = req.params.id;
+  const query = {_id: new ObjectId(id)};
+  const result = await jobs.deleteOne(query);
   res.send(result);
 })
 
