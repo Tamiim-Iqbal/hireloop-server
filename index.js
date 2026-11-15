@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import 'dotenv/config';
 import { MongoClient } from 'mongodb';
+import { ObjectId } from "mongodb";
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -54,11 +55,43 @@ app.post('/jobs', async (req, res) => {
 })
 
 app.delete('/jobs/:id', async (req, res) => {
-  const id = req.params.id;
-  const query = {_id: new ObjectId(id)};
-  const result = await jobs.deleteOne(query);
-  res.send(result);
-})
+  try {
+    const id = req.params.id;
+
+    // Validate ObjectId
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).send({
+        success: false,
+        message: "Invalid Job ID"
+      });
+    }
+
+    const query = { _id: new ObjectId(id) };
+
+    const result = await jobs.deleteOne(query);
+
+    if (result.deletedCount === 0) {
+      return res.status(404).send({
+        success: false,
+        message: "Job not found"
+      });
+    }
+
+    res.send({
+      success: true,
+      message: "Job deleted successfully",
+      result
+    });
+
+  } catch (error) {
+    console.error("Delete Job Error:", error);
+
+    res.status(500).send({
+      success: false,
+      message: "Failed to delete job"
+    });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Hireloop server is running on port ${PORT}`);
